@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { generateExportImage } from './utils/canvasExport';
 import { getStaticMapUrl } from './services/maps';
 import { searchLocation, reverseGeocode } from './services/geocode';
+import { LocationPickerMap } from './components/LocationPickerMap';
 
 export default function App() {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -104,6 +105,26 @@ export default function App() {
             className="flex-1 border p-2 rounded" 
           />
           <button onClick={handleSearch} className="bg-blue-600 text-white px-4 py-2 rounded">Search</button>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-bold">Interactive Map</label>
+          <LocationPickerMap 
+            lat={parseFloat(lat) || 0} 
+            lng={parseFloat(lng) || 0} 
+            onLocationSelect={async (newLat, newLng) => {
+              setLat(newLat.toFixed(5));
+              setLng(newLng.toFixed(5));
+              const addr = await reverseGeocode(newLat, newLng);
+              if (addr) {
+                const parts = addr.split(', ');
+                const locName = parts.length > 1 ? `${parts[0]}, ${parts[1]}` : parts[0];
+                setLocationName(locName);
+                setAddress(addr);
+              }
+            }}
+          />
+          <p className="text-xs text-gray-500 mb-2">Drag the pin or click anywhere on the map to set location.</p>
         </div>
 
         <div className="flex flex-col gap-2">
