@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Search, MapPin, Map, Navigation, Thermometer, Info, Key } from 'lucide-react';
 import { AppState } from '../hooks/useGeoTagState';
 import { searchLocation, reverseGeocode } from '../services/geocode';
+import { LocationPickerMap } from './LocationPickerMap';
 
 interface SidebarProps {
   state: AppState;
@@ -49,6 +50,18 @@ export function Sidebar({ state, updateState }: SidebarProps) {
     }
   };
 
+  const handleMapSelect = async (lat: number, lng: number) => {
+    updateState({ lat: lat.toFixed(6), lng: lng.toFixed(6) });
+    setIsSearching(true);
+    const address = await reverseGeocode(lat, lng);
+    if (address) {
+      const parts = address.split(', ');
+      const locationName = parts.length > 1 ? `${parts[0]}, ${parts[1]}` : parts[0];
+      updateState({ locationName, address });
+    }
+    setIsSearching(false);
+  };
+
   return (
     <div className="w-full lg:w-96 bg-white border-r border-gray-200 h-full overflow-y-auto flex flex-col">
       <div className="p-6 border-b border-gray-100">
@@ -94,6 +107,22 @@ export function Sidebar({ state, updateState }: SidebarProps) {
               <Search size={18} />
             </button>
           </div>
+        </div>
+
+        <div className="h-px bg-gray-200 my-4" />
+
+        {/* Interactive Map Picker */}
+        <div className="space-y-2">
+          <label className="text-sm font-semibold text-gray-700 flex items-center justify-between">
+            <span>Interactive Map</span>
+            {isSearching && <span className="text-xs text-blue-600 font-normal">Updating address...</span>}
+          </label>
+          <LocationPickerMap 
+            lat={parseFloat(state.lat) || 0} 
+            lng={parseFloat(state.lng) || 0} 
+            onLocationSelect={handleMapSelect} 
+          />
+          <p className="text-xs text-gray-500">Drag the pin or click anywhere on the map to set location.</p>
         </div>
 
         <div className="h-px bg-gray-200 my-4" />

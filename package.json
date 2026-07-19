@@ -12,14 +12,17 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.25.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-draggable": "^4.7.0",
+    "react-leaflet": "^5.0.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^24.13.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
